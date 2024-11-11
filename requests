@@ -1,0 +1,61 @@
+# -*- restclient -*-
+
+# Package restclient-mode, as a Postman alternative.
+# Lines starting with # are considered comments AND also act as separators.
+
+# C-c C-v | restclient-http-send-current-stay-in-window
+
+# (setq restclient-var-overrides nil)
+
+# ------------------------------------------
+# Variables
+
+:id = 00000000-0000-0000-0000-000000000000
+
+# ------------------------------------------
+
+GET http://localhost:8080/todos
+-> jq-set-var :id .[0].id
+Accept: application/json
+
+# -> run-hook (restclient-set-var ":id" (cdr (assq 'id (aref (json-read) 0))))
+
+# ------------------------------------------
+
+GET http://localhost:8080/todos/:id
+Accept: application/json
+
+# ------------------------------------------
+
+POST http://localhost:8080/todos
+-> run-hook (restclient-set-var ":id" (cdr (assq 'id (json-read))))
+Accept: application/json
+Content-Type: application/json
+
+{
+	"title": "I need to to stuff",
+}
+
+# ------------------------------------------
+
+PUT http://localhost:8080/todos/:id
+-> run-hook (restclient-set-var ":id" (cdr (assq 'id (json-read))))
+Accept: application/json
+Content-Type: application/json
+
+{
+	"title": "I need to to stuff some more",
+}
+
+# ------------------------------------------
+
+# The id needs to be according to the UUID spec, hex with spaces
+#
+# SELECT
+# INSERT(INSERT(INSERT(INSERT(HEX(id), 9, 0, '-'), 14, 0, '-'), 19, 0, '-'), 24, 0, '-') AS id,
+# title FROM riyyi.todos;
+
+DELETE http://localhost:8080/todos/:id
+Accept: application/json
+
+# ------------------------------------------
