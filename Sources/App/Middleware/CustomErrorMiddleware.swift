@@ -11,10 +11,18 @@ public final class CustomErrorMiddleware: Middleware {
 
     public init(environment: Environment) {
         self.environment = environment
+        self.errorMiddleware = ErrorMiddleware.`default`(environment: environment)
     }
 
     public func respond(to request: Request, chainingTo next: Responder) -> EventLoopFuture<Response> {
-        next.respond(to: request).flatMapErrorThrowing { error in
+
+        // Let ErrorMiddleware handle API endpoint errors
+        if let acceptHeader = request.headers.first(name: "Accept"),
+            acceptHeader == "application/json" {
+            return errorMiddleware.respond(to: request, chainingTo: next)
+        }
+
+        return next.respond(to: request).flatMapErrorThrowing { error in
             self.makeResponse(with: request, reason: error)
         }
     }
@@ -47,45 +55,18 @@ public final class CustomErrorMiddleware: Middleware {
         // Report the error
         req.logger.report(error: error, file: source.file, function: source.function, line: source.line)
 
-        let body = makeResponseBody(with: req, reason: reason, status: status, headers: &headers)
+        headers.contentType = .html
+
+        // Render error to a page
+        let statusCode = String(status.code)
+        let body = Response.Body(string: MainLayout(title: "Error \(statusCode))") {
+            ErrorPage(status: statusCode, reason: reason)
+        }.render())
 
         // Create a Response with appropriate status
         return Response(status: status, headers: headers, body: body)
     }
 
-    private func makeResponseBody(with req: Request, reason: String, status: HTTPResponseStatus,
-                                  headers: inout HTTPHeaders) -> Response.Body {
-        let body: Response.Body
-
-        if let acceptHeader = req.headers.first(name: "Accept"),
-           acceptHeader == "application/json" {
-            // Attempt to serialize the error to JSON
-            do {
-                let encoder = try ContentConfiguration.global.requireEncoder(for: .json)
-                var byteBuffer = req.byteBufferAllocator.buffer(capacity: 0)
-                try encoder.encode(ErrorResponse(error: true, reason: reason), to: &byteBuffer, headers: &headers)
-
-                body = .init(
-                  buffer: byteBuffer,
-                  byteBufferAllocator: req.byteBufferAllocator
-                )
-            } catch {
-                body = .init(string: "Oops: \(String(describing: error))\nWhile encoding error: \(reason)",
-                             byteBufferAllocator: req.byteBufferAllocator)
-                headers.contentType = .plainText
-            }
-        }
-        else {
-            // Attempt to render the error to a page
-            let statusCode = String(status.code)
-            body = .init(string: MainLayout(title: "Error \(statusCode))") {
-                ErrorPage(status: statusCode, reason: reason)
-            }.render())
-            headers.contentType = .html
-        }
-
-        return body
-    }
-
     private let environment: Environment
+    private let errorMiddleware: ErrorMiddleware
 }
