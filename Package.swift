@@ -17,14 +17,16 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.76.1"),
         //
         .package(url: "https://github.com/vapor-community/vapor-elementary.git", from: "0.2.0"),
+        //
+        .package(url: "https://github.com/sliemeobn/elementary-htmx.git", from: "0.3.0"),
     ],
     targets: [
         .executableTarget(
             name: "App",
             dependencies: [
-                // .product(name: "ElementaryHTMX", package: "elementary-htmx"),
-                // .product(name: "ElementaryHTMXSSE", package: "elementary-htmx"),
-                // .product(name: "ElementaryHTMXWS", package: "elementary-htmx"),
+                .product(name: "ElementaryHTMX", package: "elementary-htmx"),
+                .product(name: "ElementaryHTMXSSE", package: "elementary-htmx"),
+                .product(name: "ElementaryHTMXWS", package: "elementary-htmx"),
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentMySQLDriver", package: "fluent-mysql-driver"),
                 .product(name: "NIOCore", package: "swift-nio"),

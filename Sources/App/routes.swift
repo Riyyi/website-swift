@@ -6,27 +6,23 @@ import VaporElementary
 func routes(_ app: Application) throws {
     app.routes.caseInsensitive = true
 
-    app.get { req async throws in
-
-        let todo = Todo(title: "Test Todo")
-        try await todo.save(on: req.db)
-
-        return "It works!"
+    app.get() { req async throws in
+        HTMLResponse {
+            MainLayout(title: "Homepage") {
+                IndexPage()
+            }
+        }
     }
 
     app.get("hello") { req async -> String in
         "Hello, world!"
     }
 
-    app.get("test") { _ in
-        HTMLResponse {
-            MainLayout(title: "Test123") {
-                IndexPage()
-            }
-        }
-    }
-
     try app.register(collection: TodoController())
+
+    try app.group("api") { api in
+        try api.register(collection: TodoAPIController())
+    }
 }
 
 /*
