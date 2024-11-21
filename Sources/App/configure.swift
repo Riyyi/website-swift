@@ -6,8 +6,14 @@ import Vapor
 // Configures your application
 public func configure(_ app: Application) async throws {
 	app.middleware = .init()
+
+    // Global user state management
+	app.middleware.use(StateMiddleware())
+    app.manager = .init()
+
     // Error HTML pages or JSON responses
 	app.middleware.use(CustomErrorMiddleware(environment: app.environment))
+
     // Serve files from /Public folder
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 

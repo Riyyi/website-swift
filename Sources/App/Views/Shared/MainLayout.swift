@@ -19,17 +19,24 @@ struct MainLayout<Body: HTML>: HTMLDocument {
             .href("https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"),
             .integrity("sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"),
             .crossorigin(.anonymous))
+
+        link(
+            .rel(.stylesheet),
+            .href("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"),
+            .integrity("sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+"),
+            .crossorigin(.anonymous))
+
         link(.rel(.stylesheet), .href("/css/style.css"))
 
         // ---------------------------------
         // Style
 
         style {
-"""
-body {
-    padding-top: 56px;
-}
-"""
+            """
+            body {
+                padding-top: 56px;
+            }
+            """
         }
     }
 
@@ -50,6 +57,9 @@ body {
                     pageContent
                 }
             }
+
+            // Placeholder for all toast messages
+            ToastView()
         }
 
         // ---------------------------------
@@ -76,6 +86,7 @@ body {
             .integrity("sha384-yhWpPsq2os1hEnx1I8cH7Ius6rclwTm3G2fhXDLF6Pzv7UnSsXY7BAj4fB6PIgSz"),
             .crossorigin(.anonymous)
         ) {}
+
         script(.src("/js/site.js")) {}
     }
 

@@ -6,7 +6,7 @@ import VaporElementary
 func routes(_ app: Application) throws {
     app.routes.caseInsensitive = true
 
-    app.get() { req async throws in
+    app.get { req async throws in
         HTMLResponse {
             MainLayout(title: "Homepage") {
                 IndexPage()
@@ -18,10 +18,21 @@ func routes(_ app: Application) throws {
         "Hello, world!"
     }
 
+    app.get("toast", use: toast)
+
     try app.register(collection: TodoController())
 
     try app.group("api") { api in
         try api.register(collection: TodoAPIController())
+    }
+}
+
+@Sendable
+func toast(req: Request) throws -> HTMLResponse {
+    let state = try getState(request: req)
+
+    return HTMLResponse {
+        ToastView(state: state.toast)
     }
 }
 

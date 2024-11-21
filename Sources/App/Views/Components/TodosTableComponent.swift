@@ -17,7 +17,10 @@ struct TodosTableComponent: HTML {
                     tr {
                         th { "#" }
                         th { "ID" }
-                        th { "Title" }
+                        th {
+                            "Title "
+                            i(.class("bi bi-arrow-down-circle")) {}
+                        }
                         th { "Modifier" }
                     }
                 }
@@ -32,10 +35,12 @@ struct TodosTableComponent: HTML {
                             td { todo.title ?? "" }
                             td {
                                 if let id = todo.id {
-                                    button(
-                                        .class("btn btn-danger"),
+                                    i(
+                                        .class("bi bi-trash3 text-danger"),
+                                        .data("bs-toggle", value: "tooltip"),
+                                        .data("bs-title", value: "Delete"),
                                         .hx.delete("/\(name)/\(id.uuidString)")
-                                    ) { "Delete" }
+                                    ) {}
                                 }
                             }
                         }
