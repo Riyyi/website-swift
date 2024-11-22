@@ -23,13 +23,13 @@ public final class CustomErrorMiddleware: Middleware {
         }
 
         return next.respond(to: request).flatMapErrorThrowing { error in
-            self.makeResponse(with: request, reason: error)
+            try self.makeResponse(with: request, reason: error)
         }
     }
 
     // -------------------------------------
 
-    private func makeResponse(with req: Request, reason error: Error) -> Response {
+    private func makeResponse(with req: Request, reason error: Error) throws -> Response {
         let reason: String
         let status: HTTPResponseStatus
         var headers: HTTPHeaders
@@ -57,11 +57,27 @@ public final class CustomErrorMiddleware: Middleware {
 
         headers.contentType = .html
 
-        // Render error to a page
         let statusCode = String(status.code)
-        let body = Response.Body(string: MainLayout(title: "Error \(statusCode))") {
-            ErrorPage(status: statusCode, reason: reason)
-        }.render())
+        var body = Response.Body()
+
+        // Display error in toast message for HTMX requests
+        if let isHTMXHeader = req.headers.first(name: "HX-Request"), isHTMXHeader == "true" {
+            let state = try getState(request: req)
+            // Only set a new toast if the endpoint hasnt already
+            if state.toast.message.isEmpty {
+                state.toast = ToastState(message: reason,
+                                         title: "Error \(statusCode)",
+                                         level: ToastState.Level.error)
+            }
+            headers.add(name: "HX-Trigger", value: "toast")
+        }
+        // Render error to a page
+        else {
+            body = Response.Body(string: MainLayout(title: "Error \(statusCode))") {
+                ErrorPage(status: statusCode, reason: reason)
+            }.render())
+        }
+
 
         // Create a Response with appropriate status
         return Response(status: status, headers: headers, body: body)

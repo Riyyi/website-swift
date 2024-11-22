@@ -7,4 +7,4 @@ Website, written in Swift 6.
 - [[https://github.com/vapor/vapor][Vapor]] HTTP web framework
 - [[https://github.com/vapor/fluent.git][Fluent]] ORM
 - [[https://github.com/sliemeobn/elementary][Elementary]] HTML templating
-- [[https://github.com/bigskysoftware/htmx][htmx]] font-end JS
+- [[https://github.com/bigskysoftware/htmx][htmx]] front-end JS

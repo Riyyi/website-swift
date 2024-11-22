@@ -31,9 +31,11 @@ func routes(_ app: Application) throws {
 @Sendable
 func toast(req: Request) throws -> HTMLResponse {
     let state = try getState(request: req)
+    let toast = state.toast
+    state.toast = ToastState() // Clear toast
 
     return HTMLResponse {
-        ToastComponent(state: state.toast)
+        ToastComponent(state: toast)
     }
 }
 

@@ -4,6 +4,7 @@ import Vapor
 
 public final class UserState: @unchecked Sendable {
 	var toast: ToastState = ToastState()
+    var todos: TodosState = TodosState()
 }
 
 // -----------------------------------------
