@@ -59,7 +59,7 @@ struct MainLayout<Body: HTML>: HTMLDocument {
             }
 
             // Placeholder for all toast messages
-            ToastView()
+            ToastComponent()
         }
 
         // ---------------------------------

@@ -9,7 +9,7 @@ import ElementaryHTMX
 //
 // The header "HX-Trigger" will make the part refresh and show the toast message
 
-struct ToastView: HTML {
+struct ToastComponent: HTML {
 
     var state: ToastState = ToastState()
 
@@ -33,16 +33,14 @@ struct ToastView: HTML {
                 div(.class("toast-body")) { state.message }
             }
             if !state.message.isEmpty {
-                script {
+                ScriptAfterLoad(initial: false) {
                     """
-                    runOnceAfterSettle(function () {
-                        const element = document.getElementById("toast");
-                        const toast = new bootstrap.Toast(element, { autohide: true, delay: 5000 });
-                        toast.show();
+                    const element = document.getElementById("toast");
+                    const toast = new bootstrap.Toast(element, { autohide: true, delay: 5000 });
+                    toast.show();
 
-                        element.addEventListener("hidden.bs.toast", function () {
-                            element.remove();
-                        });
+                    element.addEventListener("hidden.bs.toast", function () {
+                        element.remove();
                     });
                     """
                 }

@@ -21,6 +21,7 @@ func routes(_ app: Application) throws {
     app.get("toast", use: toast)
 
     try app.register(collection: TodoController())
+    try app.register(collection: TestController())
 
     try app.group("api") { api in
         try api.register(collection: TodoAPIController())
@@ -32,7 +33,7 @@ func toast(req: Request) throws -> HTMLResponse {
     let state = try getState(request: req)
 
     return HTMLResponse {
-        ToastView(state: state.toast)
+        ToastComponent(state: state.toast)
     }
 }
 

@@ -27,6 +27,8 @@ struct TodoController: RouteCollection {
             MainLayout(title: "Todos") {
                 TodosTableComponent(name: "todos", todos: todos)
                 TodosFormComponent(name: "todos-form", target: "todos")
+
+                button(.class("btn btn-primary"), .type(.button), .hx.get("/test/toast")) { "Toast" }
             }
         }
     }

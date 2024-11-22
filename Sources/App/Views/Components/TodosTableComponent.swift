@@ -47,6 +47,8 @@ struct TodosTableComponent: HTML {
                     }
                 }
             }
+
+            ScriptAfterLoad(initial: !refresh) { "web.tooltips();" };
         }
     }
 
